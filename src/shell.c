@@ -124,10 +124,13 @@ void execute_sequential(char *line) {
 }
 
 void executeConditional(char *line) {
-    char *cmd1 = strtok(line, "&&");
-    char *cmd2 = strtok(NULL, "");
-
-    if (cmd1 == NULL) return;
+    // Split on the two-character "&&" itself. strtok would treat it as a set of
+    // '&' delimiters and leave a stray '&' at the start of the second command.
+    char *sep = strstr(line, "&&");
+    if (sep == NULL) return;
+    *sep = '\0';
+    char *cmd1 = line;
+    char *cmd2 = sep + 2;
 
     pid_t child1 = fork();
     int status;
